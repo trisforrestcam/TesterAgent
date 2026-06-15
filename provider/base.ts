@@ -33,7 +33,7 @@ export abstract class BaseProvider implements ProviderAdapter {
     }
   }
 
-  toOpencodeConfig(): Record<string, unknown> {
+  toOpencodeConfig() {
     return {
       [this._id]: {
         options: {
@@ -43,6 +43,7 @@ export abstract class BaseProvider implements ProviderAdapter {
         models: {
           [this._model]: {
             name: this._model,
+            reasoning: false,
           },
         },
       },

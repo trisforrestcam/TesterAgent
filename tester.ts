@@ -1,5 +1,5 @@
 import "dotenv/config"
-import { createOpencode, type OpencodeClient } from "@opencode-ai/sdk"
+import { createOpencode, type OpencodeClient } from "@opencode-ai/sdk/v2"
 import { getProvider } from "./provider"
 import type { ProviderAdapter } from "./provider/types"
 
@@ -13,11 +13,9 @@ async function prompt(
   console.log(`\n[${cfg.providerID}/${cfg.modelID}] Prompt: ${text}`)
 
   const result = await client.session.prompt({
-    path: { id: sessionId },
-    body: {
-      model: { providerID: cfg.providerID, modelID: cfg.modelID },
-      parts: [{ type: "text", text }],
-    },
+    sessionID: sessionId,
+    model: { providerID: cfg.providerID, modelID: cfg.modelID },
+    parts: [{ type: "text", text }],
   })
 
   console.log("Result:", JSON.stringify(result, null, 2))
@@ -45,9 +43,12 @@ async function main() {
   console.log(`Server: ${server.url}`)
 
   const session = await client.session.create({
-    body: { title: `${cfg.providerID} Tester` },
+    title: `${cfg.providerID} Tester`,
   })
-  const sessionId = session.data!.id
+  if (session.error || !session.data) {
+    throw new Error(`Failed to create session: ${JSON.stringify(session.error)}`)
+  }
+  const sessionId = session.data.id
   console.log(`Session: ${sessionId}`)
 
   const res = await prompt(client, provider, sessionId, "Hello! Who are you?")

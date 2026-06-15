@@ -1,3 +1,5 @@
+import type { ProviderConfig as SDKProviderConfig } from "@opencode-ai/sdk/v2"
+
 export interface ProviderConfig {
   providerID: string
   modelID: string
@@ -11,5 +13,5 @@ export interface ProviderAdapter {
   apiKey(): string
   baseURL(): string
   toConfig(): ProviderConfig
-  toOpencodeConfig(): Record<string, unknown>
+  toOpencodeConfig(): { [providerID: string]: SDKProviderConfig }
 }
